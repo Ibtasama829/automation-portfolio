@@ -1,0 +1,10 @@
+# Never commit secrets
+.env
+**/.env
+*.env
+client_secret*.json
+
+# Videos live on YouTube, not in git
+*.mp4
+*.mov
+*.webm

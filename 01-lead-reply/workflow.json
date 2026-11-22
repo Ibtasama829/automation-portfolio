@@ -1,0 +1,409 @@
+{
+  "name": "01 Lead Reply",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Get in touch",
+        "formDescription": "Tell us what you need and we'll get back to you fast.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email",
+              "fieldType": "email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Company"
+            },
+            {
+              "fieldLabel": "Message",
+              "fieldType": "textarea"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        0,
+        0
+      ],
+      "id": "5e11034f-be17-4b0a-84a6-e7caf37bdd76",
+      "name": "On form submission",
+      "webhookId": "15b128f2-efe8-4b13-a91e-4a27f8fe2f06"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3-flash-preview",
+          "mode": "list",
+          "cachedResultName": "Gemini 3 Flash Preview"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You write the first reply to a new lead for a small business. Write a warm, professional email reply of at most 120 words.\n\nRules:\n- Reply in the same language the lead wrote in.\n- Use their first name.\n- Respond only to what they actually wrote. Do not assume or praise anything they did not mention (for example growth, success or size).\n- Do not describe our own company, experience, clients or results. Simply say we would be glad to help.\n- Suggest a short call as the next step, without proposing a specific day or time.\n- If the message is empty or vague, thank them and ask one simple question about what they need.\n- Never invent prices, dates, guarantees or facts.\n- Sign off as \"The team\".\n- Output only the email body, no subject line.\n\nLead details:\nName: {{ $json.Name }}\nCompany: {{ $json.Company }}\nMessage: {{ $json.Message }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        144,
+        0
+      ],
+      "id": "2ee2da14-7dc0-4e1b-91fe-2d710dcb5647",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "tMQtzovbETbpf2oW",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1tS9PrydNWw-wUE5yzustjDVeCSPPy-w-4rfFzxJmv4Y",
+          "mode": "list",
+          "cachedResultName": "Lead Reply Demo",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tS9PrydNWw-wUE5yzustjDVeCSPPy-w-4rfFzxJmv4Y/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tS9PrydNWw-wUE5yzustjDVeCSPPy-w-4rfFzxJmv4Y/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "time": "={{ $('On form submission').item.json.submittedAt }}",
+            "name": "={{ $('On form submission').item.json.Name }}",
+            "email": "={{ $('On form submission').item.json.Email }}",
+            "company": "={{ $('On form submission').item.json.Company }}",
+            "message": "={{ $('On form submission').item.json.Message }}",
+            "reply": "={{ $json.content.parts[0].text }}",
+            "status": "drafted"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "time",
+              "displayName": "time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "reply",
+              "displayName": "reply",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "error",
+              "displayName": "error",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        432,
+        -112
+      ],
+      "id": "d63d3529-226d-44cb-a3f4-84624f90f96c",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8uVh3vCTo9ukLFX0",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "ibtisama829@gmail.com",
+        "subject": "=New lead: {{ $('On form submission').item.json.Name }} ({{ $('On form submission').item.json.Company }})",
+        "emailType": "text",
+        "message": "=New lead from your website form.\n\nName: {{ $('On form submission').item.json.Name }}\nEmail: {{ $('On form submission').item.json.Email }}\nCompany: {{ $('On form submission').item.json.Company }}\nMessage:\n{{ $('On form submission').item.json.Message }}\n\n--- Suggested reply (check it, then send it yourself) ---\n\n{{ $('Message a model').item.json.content.parts[0].text }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        640,
+        -112
+      ],
+      "id": "91722db7-1a51-4668-9211-dd193c3e4a30",
+      "name": "Send a message",
+      "webhookId": "d21ba9d1-03b7-4d22-b940-01d47484b03c",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "J6Usbm1ayU3lAFNN",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1tS9PrydNWw-wUE5yzustjDVeCSPPy-w-4rfFzxJmv4Y",
+          "mode": "list",
+          "cachedResultName": "Lead Reply Demo",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tS9PrydNWw-wUE5yzustjDVeCSPPy-w-4rfFzxJmv4Y/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tS9PrydNWw-wUE5yzustjDVeCSPPy-w-4rfFzxJmv4Y/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "time": "={{ $('On form submission').item.json.submittedAt }}",
+            "name": "={{ $('On form submission').item.json.Name }}",
+            "email": "={{ $('On form submission').item.json.Email }}",
+            "company": "={{ $('On form submission').item.json.Company }}",
+            "message": "={{ $('On form submission').item.json.Message }}",
+            "status": "error",
+            "error": "={{ $json.error?.message ?? $json.error }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "time",
+              "displayName": "time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "reply",
+              "displayName": "reply",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "error",
+              "displayName": "error",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        432,
+        96
+      ],
+      "id": "08628016-27d7-4f85-95b8-9336c2a1f91d",
+      "name": "Log error row",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8uVh3vCTo9ukLFX0",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log error row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "versionId": "9456c7e9-0887-49eb-9b01-27b2c0f01061",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "039e27f22b4c78a54feb9e72b356dd0ddc7b56cca7650d832b96a93dcecb4336"
+  },
+  "nodeGroups": [],
+  "id": "sMtlPKfbYyYcUWAO",
+  "tags": []
+}
